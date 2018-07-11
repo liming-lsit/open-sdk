@@ -1,10 +1,11 @@
-package main.java.com.sdk;
+package com.sdk;
 
 
 import com.alibaba.fastjson.JSONObject;
 import com.sdk.utils.HmacSHA256;
 import com.sdk.utils.HttpClient;
-import main.java.com.sdk.utils.LoggerUtil;
+import com.sdk.utils.LoggerUtil;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -36,7 +37,7 @@ public class OpenSDk {
      */
     public void init(String serveraddress) {
         if (isEmpty(serveraddress)) {
-            LoggerUtil.fatal("初始化异常:serveraddress");
+            LoggerUtil.error("初始化异常:serveraddress");
             throw new IllegalArgumentException("必选参数:" + serveraddress +") "+ "为空");
         }
         SERVER_ADDRESS = serveraddress;

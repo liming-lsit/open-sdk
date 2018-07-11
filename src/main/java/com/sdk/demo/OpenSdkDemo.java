@@ -1,7 +1,7 @@
 package com.sdk.demo;
 
 import com.alibaba.fastjson.JSONObject;
-import main.java.com.sdk.OpenSDk;
+import com.sdk.OpenSDk;
 
 import java.math.BigDecimal;
 

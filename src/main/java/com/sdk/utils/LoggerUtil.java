@@ -1,9 +1,8 @@
-package main.java.com.sdk.utils;
+package com.sdk.utils;
 
-import com.sdk.utils.PropertiesUtil;
-import main.java.com.sdk.OpenSDk;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import com.sdk.OpenSDk;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -13,51 +12,38 @@ public class LoggerUtil {
 	private static Logger logger;
 	static {
 		if (logger == null) {
-			logger = Logger.getLogger(OpenSDk.class);
+			logger = LoggerFactory.getLogger(OpenSDk.class);
 			
 		}
 	}
-	 
+
 	public static void setLogger(boolean isLog) {
 		LoggerUtil.isLog = isLog;
 	}
 	public static void setLog(Logger logger) {
 		LoggerUtil.logger = logger;
 	}
-	
-	public static void setLogLevel(int level) {
-		if (logger == null) {
-			logger = Logger.getLogger(OpenSDk.class);
-		}
-		PropertyConfigurator.configure(PropertiesUtil.getPropertie(level));
-		 
 
 
-	}
-
-	public static void debug(Object msg) {
+	public static void debug(String msg) {
 		if (isLog)
 			logger.debug(new Date()+" "+msg);
 	}
 
-	public static void info(Object msg) {
+	public static void info(String msg) {
 		if (isLog)
 			logger.info(new Date()+" "+msg);
 	}
 
-	public static void warn(Object msg) {
+	public static void warn(String msg) {
 		if (isLog)
 			logger.warn(msg);
 	}
 
-	public static void error(Object msg) {
+	public static void error(String msg) {
 		if (isLog)
 			logger.error(msg);
 	}
 
-	public static void fatal(Object msg) {
-		if (isLog)
-			logger.fatal(msg);
-	}
 	  
 }

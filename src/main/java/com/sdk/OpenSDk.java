@@ -109,7 +109,7 @@ public class OpenSDk {
      * @return
      */
     public String createOrder(String openUid,
-                              String orderSn, BigDecimal totalFee,String exchange,
+                              String orderSn, String totalFee,String exchange,
                               String body,String notifyUrl,String feeType){
         LoggerUtil.info("[createOrder] openUid:{"+openUid+"},appUid:{"+APPUID+"},accountToken:{"+ACCOUNTTTOKEN+"},orderSn{"+orderSn+"},totalFee:{"+totalFee+"},exchange:{"+exchange+"},body:{"+body+"},notifyUrl:{"+notifyUrl+"}");
         Map<String, Object> params = new HashMap<String, Object>();
@@ -149,7 +149,7 @@ public class OpenSDk {
      * @return
      */
     public String createOrderSign(String openUid,
-                                  String orderSn, BigDecimal totalFee,String exchange,
+                                  String orderSn, String totalFee,String exchange,
                                   String timeStamp,String nonceStr,String feeType){
         String signString = "app_uid=" + APPUID +
                 "&open_uid=" + openUid +

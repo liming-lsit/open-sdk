@@ -15,21 +15,21 @@ import java.math.BigDecimal;
 public class OpenSdkDemo {
 
     public static void main(String[] args) {
-        String result ="";
+        String result ="ok";
         String accountUid = "171";
         String openUid="7e92616c0d0d4c1987e38bb80a6258c0";
         String orderSn="HVcS3x6xB1qf0vcOxx";
-        BigDecimal totalFee=new BigDecimal(0);
+        String totalFee="1";
         String body="测试";
         String notifyUrl="www.jd.com";
         String exchange = "true";
         String feeType = "RMB";
-        String outTradeNo = "";
-        String payAt = "";
-        String timestamp="";
-        String scode ="";
-        String code ="";
-        String sign="";
+        String outTradeNo = "HVcS3x6xB1qf0vcOxx";
+        String payAt = "2018-07-02 18:12:14";
+        String timestamp="2018-07-02 18:12:14";
+        String scode ="a20a53cd48bf42499cf5446882374353";
+        String code ="c15RR4E8Ft5DMsXS";
+        String sign="11";
         //初始化SDK
         OpenSDk openSDk = new OpenSDk();
 
@@ -73,5 +73,6 @@ public class OpenSdkDemo {
         //*sign          签名                                                            *
         //*******************************************************************************
         boolean flag = openSDk.notifyValidate(outTradeNo,totalFee.toString(),feeType,payAt,result,timestamp, scode, sign);
+        System.out.println("flag:"+flag);
     }
 }

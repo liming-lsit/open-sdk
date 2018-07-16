@@ -18,8 +18,10 @@ public class OpenSdkDemo {
         String result ="ok";
         String accountUid = "171";
         String openUid="7e92616c0d0d4c1987e38bb80a6258c0";
+        String accountToken= "eyJhbGciOiJIUzI1NiJ9.eyJ0ZWxlZ3JhbUlkIjoiMzM0ODAyMDk2In0.aKDrqbmGmKVaADCC08M1NjiIw9lcSwPK40PBaEpKc-Q";
         String orderSn="HVcS3x6xB1qf0vcOxx";
         String totalFee="1";
+        String appUid ="34342fsdfsdf";
         String body="测试";
         String notifyUrl="www.jd.com";
         String exchange = "true";
@@ -42,6 +44,24 @@ public class OpenSdkDemo {
         openSDk.init("http://127.0.0.1:8086","34342fsdfsdf","eyJhbGciOiJIUzI1NiJ9.eyJ0ZWxlZ3JhbUlkIjoiMzM0ODAyMDk2In0.aKDrqbmGmKVaADCC08M1NjiIw9lcSwPK40PBaEpKc-Q","6aae383b54f5d3503097991a60575bd7");
 
         //******************************注释*********************************************
+        //*获取用户登陆凭证                                                              *
+        //*appUid       第三方应用APP_ID                                                 *
+        //*accountUid   App账号ID                                                        *
+        //*accountToken App账号当前Token                                                 *
+        //*******************************************************************************
+        result = openSDk.queryCode(accountUid);
+        System.out.println("result:"+result);
+        JSONObject jsonObject=JSONObject.parseObject(result);
+        if("0".equals(jsonObject.get("code"))){
+            code = jsonObject.getJSONObject("data").getString("code");
+            System.out.println("statusCode=" + jsonObject.get("code") +" statusMsg="+jsonObject.get("msg") +"  code:"+code);
+            //正常返回
+        }else{
+            //异常返回输出错误码和错误信息
+            System.out.println("错误码=" + jsonObject.get("code") +" 错误信息= "+jsonObject.get("msg"));
+        }
+
+        //******************************注释*********************************************
         //*获取用户信息接口                                                              *
         //*appUid    第三方应用APP_ID                                                    *
         //*code      临时登录凭证                                                        *
@@ -56,7 +76,7 @@ public class OpenSdkDemo {
         //*totalFee   价格                                                               *
         //*body       描述                                                               *
         //*notifyUrl  推送回掉地址                                                        *
-        //*appSecret  密钥                                                                *
+        //*appSecret  密钥  9                                                              *
         //*******************************************************************************
         result = openSDk.createOrder(openUid,orderSn,totalFee,exchange,body,notifyUrl,feeType);
         System.out.println("result:"+result);

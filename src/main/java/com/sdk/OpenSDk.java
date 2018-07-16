@@ -2,18 +2,17 @@ package com.sdk;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.sdk.utils.HmacSHA256;
 import com.sdk.utils.HttpClient;
 import com.sdk.utils.LoggerUtil;
-
+import com.sdk.utils.SignUtil;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.AbstractHttpMessage;
+
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +27,7 @@ public class OpenSDk {
     private static  String SERVER_ADDRESS;
     private static final String PayPrepay = "/payment/prepay";
     private static final String QueryOpenid = "/appUsers/getOpenid";
+    private static final String QueryCode = "/appUsers/getLoginCode";
     private static String APPUID;
     private static String APPSECRET;
     private static String ACCOUNTTTOKEN;
@@ -59,6 +59,29 @@ public class OpenSDk {
     }
 
     /**
+     * 获取用户登陆凭证
+     * @param accountUid   App账号ID
+     * @return
+     */
+    public String queryCode(String accountUid){
+        LoggerUtil.info("[queryCode] accountUid:{"+accountUid+"},appUid:{"+APPUID+"},accountToken:{"+ACCOUNTTTOKEN+"}");
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("appUid", APPUID);
+        params.put("accountUid", accountUid);
+        params.put("accountToken", ACCOUNTTTOKEN);
+        String ret = "";
+        String jsonParam= JSONObject.toJSONString(params);
+        try{
+            ret = HttpClient.postDataJson(SERVER_ADDRESS+QueryCode,jsonParam);
+        }catch (Exception e) {
+            e.printStackTrace();
+            LoggerUtil.error(e.getMessage());
+            return getMyError("101111", "请求异常");
+        }
+        return ret;
+    }
+
+    /**
      * 获取用户信息接口
      * @param code      临时登录凭证
      * @return
@@ -66,7 +89,7 @@ public class OpenSDk {
     public String queryOpenid(String code){
         LoggerUtil.info("[queryOpenid] code:{"+code+"},appUid:{"+APPUID+"},accountToken:{"+ACCOUNTTTOKEN+"}");
         String ret = "";
-        Map<String,Object> params = queryParams(code);
+        Map<String,String> params = queryParams(code);
         String jsonParam= JSONObject.toJSONString(params);
         try{
             ret = HttpClient.postDataJson(SERVER_ADDRESS+QueryOpenid,jsonParam);
@@ -83,17 +106,16 @@ public class OpenSDk {
      * @param code
      * @return
      */
-    public Map<String,Object> queryParams(String code){
-        Map<String, Object> params = new HashMap<String, Object>();
+    public Map<String,String> queryParams(String code){
+        Map<String, String> params = new HashMap<String, String>();
         String nonceStr = RandomStringUtils.randomAlphanumeric(8);
         long timeStamp = System.currentTimeMillis();
         params.put("appUid", APPUID);
         params.put("code", code);
-        params.put("appSecret", APPSECRET);
-        params.put("timeStamp", timeStamp);
+        params.put("timeStamp", String.valueOf(timeStamp));
         params.put("nonceStr", nonceStr);
-        String param = "app_uid=" + APPUID + "&code=" + code + "&time_stamp=" + timeStamp + "&nonce_str=" + nonceStr + "&app_secret=" + APPSECRET;
-        String computed_sign = HmacSHA256.sign(param, APPSECRET);
+        String computed_sign =  SignUtil.getSign(params,APPSECRET);
+        params.put("appSecret", APPSECRET);
         params.put("sign", computed_sign);
         return params;
     }
@@ -124,7 +146,7 @@ public class OpenSDk {
         params.put("exchange", exchange);
         params.put("nonceStr", nonceStr);
         params.put("body", body);
-        params.put("notify_url", notifyUrl);
+        params.put("notifyUrl", notifyUrl);
         String sign = createOrderSign(openUid,orderSn,totalFee,exchange,String.valueOf(timeStamp),nonceStr,feeType);
         params.put("sign", sign);
         String jsonParam=  JSONObject.toJSONString(params);
@@ -151,16 +173,16 @@ public class OpenSDk {
     public String createOrderSign(String openUid,
                                   String orderSn, String totalFee,String exchange,
                                   String timeStamp,String nonceStr,String feeType){
-        String signString = "app_uid=" + APPUID +
-                "&open_uid=" + openUid +
-                "&out_trade_no=" + orderSn +
-                "&time_stamp=" + timeStamp +
-                "&total_fee=" + totalFee +
-                "&fee_type=" +feeType+
-                "&exchange=" +exchange+
-                "&nonce_str=" + nonceStr +
-                "&app_secret=" + APPSECRET;
-        String sign = HmacSHA256.sign(signString, APPSECRET);
+        Map<String,String> map = new HashMap<String, String>();
+        map.put("appUid",APPUID);
+        map.put("openUid",openUid);
+        map.put("outTradeNo",orderSn);
+        map.put("timeStamp",timeStamp);
+        map.put("totalFee",totalFee);
+        map.put("feeType",feeType);
+        map.put("exchange",exchange);
+        map.put("nonceStr",nonceStr);
+        String sign =  SignUtil.getSign(map,APPSECRET);
         return sign;
     }
 
@@ -229,9 +251,9 @@ public class OpenSDk {
     private static String getMyError(String code, String msg) {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("{");
-        stringBuffer.append("statusCode:"+code);
+        stringBuffer.append("code:"+code);
         stringBuffer.append(",");
-        stringBuffer.append("statusMsg:"+msg);
+        stringBuffer.append("msg:"+msg);
         stringBuffer.append("}");
         return stringBuffer.toString();
     }
@@ -264,16 +286,15 @@ public class OpenSDk {
                                 String totalFee, String feeType, String payAt,
                                 String timestamp, String scode,
                                 String sign, String appSecret) {
-        String params = "app_uid=" + appUid +
-                "&out_trade_no=" + outTradeNo +
-                "&total_fee=" + totalFee +
-                "&fee_type=" + feeType +
-                "&pay_at=" + payAt +
-                "&timestamp=" + timestamp +
-                "&scode=" + scode +
-                "&app_secret=" + appSecret;
-        String computedSign = HmacSHA256.sign(params, appSecret);
-
+        Map<String,String> map = new HashMap<String, String>();
+        map.put("appUid",appUid);
+        map.put("outTradeNo",outTradeNo);
+        map.put("totalFee",totalFee);
+        map.put("feeType",feeType);
+        map.put("payAt",payAt);
+        map.put("scode",scode);
+        map.put("timeStamp",timestamp);
+        String computedSign =  SignUtil.getSign(map,appSecret);
         return sign.equals(computedSign);
     }
 

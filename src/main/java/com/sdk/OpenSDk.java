@@ -134,12 +134,12 @@ public class OpenSDk {
                               String orderSn, String totalFee,String exchange,
                               String body,String notifyUrl,String feeType){
         LoggerUtil.info("[createOrder] openUid:{"+openUid+"},appUid:{"+APPUID+"},accountToken:{"+ACCOUNTTTOKEN+"},orderSn{"+orderSn+"},totalFee:{"+totalFee+"},exchange:{"+exchange+"},body:{"+body+"},notifyUrl:{"+notifyUrl+"}");
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, String> params = new HashMap<String, String>();
         params.put("appUid", APPUID);
         params.put("openUid", openUid);
         params.put("outTradeNo", orderSn);
         long timeStamp = System.currentTimeMillis();
-        params.put("timeStamp", timeStamp);
+        params.put("timeStamp", String.valueOf(timeStamp));
         String nonceStr = RandomStringUtils.randomAlphanumeric(8);
         params.put("totalFee", totalFee);
         params.put("feeType", feeType);
@@ -147,7 +147,7 @@ public class OpenSDk {
         params.put("nonceStr", nonceStr);
         params.put("body", body);
         params.put("notifyUrl", notifyUrl);
-        String sign = createOrderSign(openUid,orderSn,totalFee,exchange,String.valueOf(timeStamp),nonceStr,feeType);
+        String sign = SignUtil.getSign(params,APPSECRET);
         params.put("sign", sign);
         String jsonParam=  JSONObject.toJSONString(params);
         String ret = "";
@@ -161,30 +161,6 @@ public class OpenSDk {
         return ret;
     }
 
-    /**
-     *  创建订单签名
-     * @param openUid    用户OpenId
-     * @param orderSn    订单号
-     * @param totalFee   价格
-     * @param exchange   是否支持币种兑换
-     * @param feeType    币种
-     * @return
-     */
-    public String createOrderSign(String openUid,
-                                  String orderSn, String totalFee,String exchange,
-                                  String timeStamp,String nonceStr,String feeType){
-        Map<String,String> map = new HashMap<String, String>();
-        map.put("appUid",APPUID);
-        map.put("openUid",openUid);
-        map.put("outTradeNo",orderSn);
-        map.put("timeStamp",timeStamp);
-        map.put("totalFee",totalFee);
-        map.put("feeType",feeType);
-        map.put("exchange",exchange);
-        map.put("nonceStr",nonceStr);
-        String sign =  SignUtil.getSign(map,APPSECRET);
-        return sign;
-    }
 
     /**
      * 商户订单数据校验
@@ -237,7 +213,7 @@ public class OpenSDk {
             LoggerUtil.error("必选参数:sign 为空");
             throw new IllegalArgumentException("必选参数:sign 为空");
         }
-        if (!verifyNotify(APPUID, outTradeNo,
+        if (!verifyNotify(APPUID, outTradeNo,result,
                 totalFee, feeType, payAt,
                 timestamp, scode,
                 sign, APPSECRET)) {
@@ -282,7 +258,7 @@ public class OpenSDk {
      * @param appSecret
      * @return
      */
-    public Boolean verifyNotify(String appUid, String outTradeNo,
+    public Boolean verifyNotify(String appUid, String outTradeNo,String result,
                                 String totalFee, String feeType, String payAt,
                                 String timestamp, String scode,
                                 String sign, String appSecret) {
@@ -292,6 +268,7 @@ public class OpenSDk {
         map.put("totalFee",totalFee);
         map.put("feeType",feeType);
         map.put("payAt",payAt);
+        map.put("result",result);
         map.put("scode",scode);
         map.put("timeStamp",timestamp);
         String computedSign =  SignUtil.getSign(map,appSecret);

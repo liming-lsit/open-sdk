@@ -26,36 +26,29 @@ public class OpenSDk {
     private static final int Request_Post = 1;
     private static  String SERVER_ADDRESS;
     private static final String PayPrepay = "/payment/prepay";
-    private static final String QueryOpenid = "/appUsers/getOpenid";
-    private static final String QueryCode = "/appUsers/getLoginCode";
+    private static final String QueryOpenid = "/appUsers/queryOpenId";
+    private static final String QueryCode = "/appUsers/queryCode";
     private static String APPUID;
     private static String APPSECRET;
-    private static String ACCOUNTTTOKEN;
 
     /**
      * 初始化服务地址和端口
      * @param serveraddress  服务器地址
      * @param appUid         APPID
-     * @param accountToken   TOKEN
      * @param appSecret      SECRET
      */
-    public void init(String serveraddress,String appUid,String accountToken,String appSecret) {
+    public void init(String serveraddress,String appUid,String appSecret) {
         if (StringUtils.isEmpty(serveraddress)) {
             LoggerUtil.error("初始化异常:serveraddress");
             throw new IllegalArgumentException("必选参数:serveraddress为空");
         }
-        if (StringUtils.isEmpty(accountToken)) {
-            LoggerUtil.error("初始化异常:accountToken");
-            throw new IllegalArgumentException("必选参数:accountToken 为空");
-        }
-        if (StringUtils.isEmpty(accountToken)) {
+        if (StringUtils.isEmpty(appSecret)) {
             LoggerUtil.error("初始化异常:appSecret");
             throw new IllegalArgumentException("必选参数:appSecret 为空");
         }
         SERVER_ADDRESS = serveraddress;
         APPUID = appUid;
         APPSECRET = appSecret;
-        ACCOUNTTTOKEN = accountToken;
     }
 
     /**
@@ -63,12 +56,12 @@ public class OpenSDk {
      * @param accountUid   App账号ID
      * @return
      */
-    public String queryCode(String accountUid){
-        LoggerUtil.info("[queryCode] accountUid:{"+accountUid+"},appUid:{"+APPUID+"},accountToken:{"+ACCOUNTTTOKEN+"}");
+    public String queryCode(String accountUid,String accountToken){
+        LoggerUtil.info("[queryCode] accountUid:{"+accountUid+"},appUid:{"+APPUID+"},accountToken:{"+accountToken+"}");
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("appUid", APPUID);
         params.put("accountUid", accountUid);
-        params.put("accountToken", ACCOUNTTTOKEN);
+        params.put("accountToken", accountToken);
         String ret = "";
         String jsonParam= JSONObject.toJSONString(params);
         try{
@@ -87,7 +80,7 @@ public class OpenSDk {
      * @return
      */
     public String queryOpenid(String code){
-        LoggerUtil.info("[queryOpenid] code:{"+code+"},appUid:{"+APPUID+"},accountToken:{"+ACCOUNTTTOKEN+"}");
+        LoggerUtil.info("[queryOpenid] code:{"+code+"},appUid:{"+APPUID+"}");
         String ret = "";
         Map<String,String> params = queryParams(code);
         String jsonParam= JSONObject.toJSONString(params);
@@ -133,7 +126,7 @@ public class OpenSDk {
     public String createOrder(String openUid,
                               String orderSn, String totalFee,String exchange,
                               String body,String notifyUrl,String feeType){
-        LoggerUtil.info("[createOrder] openUid:{"+openUid+"},appUid:{"+APPUID+"},accountToken:{"+ACCOUNTTTOKEN+"},orderSn{"+orderSn+"},totalFee:{"+totalFee+"},exchange:{"+exchange+"},body:{"+body+"},notifyUrl:{"+notifyUrl+"}");
+        LoggerUtil.info("[createOrder] openUid:{"+openUid+"},appUid:{"+APPUID+"},orderSn{"+orderSn+"},totalFee:{"+totalFee+"},exchange:{"+exchange+"},body:{"+body+"},notifyUrl:{"+notifyUrl+"}");
         Map<String, String> params = new HashMap<String, String>();
         params.put("appUid", APPUID);
         params.put("openUid", openUid);
@@ -175,7 +168,7 @@ public class OpenSDk {
      * @return
      */
     public boolean notifyValidate(String outTradeNo,String totalFee, String feeType,String payAt,String result, String timestamp, String scode,String sign){
-        LoggerUtil.info("[notifyValidate] outTradeNo:{"+outTradeNo+"},appUid:{"+APPUID+"},accountToken:{"+ACCOUNTTTOKEN+"},result{"+result+"},totalFee:{"+totalFee+"},payAt:{"+payAt+"},scode:{"+scode+"},sign:{"+sign+"}");
+        LoggerUtil.info("[notifyValidate] outTradeNo:{"+outTradeNo+"},appUid:{"+APPUID+"},result{"+result+"},totalFee:{"+totalFee+"},payAt:{"+payAt+"},scode:{"+scode+"},sign:{"+sign+"}");
         boolean flag = true;
         if(StringUtils.isEmpty(APPUID)) {
             LoggerUtil.error("必选参数:appUid 为空");

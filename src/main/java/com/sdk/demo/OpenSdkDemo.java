@@ -16,8 +16,8 @@ public class OpenSdkDemo {
 
     public static void main(String[] args) {
         String result ="ok";
-        String accountUid = "171";
-        String openUid="7e92616c0d0d4c1987e38bb80a6258c0";
+        String accountUid = "32";
+        String openUid="85f90d7d831c4a7ebfcfa8a6f9b38f07";
         String accountToken= "eyJhbGciOiJIUzI1NiJ9.eyJ0ZWxlZ3JhbUlkIjoiMzM0ODAyMDk2In0.aKDrqbmGmKVaADCC08M1NjiIw9lcSwPK40PBaEpKc-Q";
         String orderSn="HVcS3x6xB1qf0vcOxx";
         String totalFee="1";
@@ -37,11 +37,10 @@ public class OpenSdkDemo {
 
         //******************************注释*********************************************
         //*serveraddress 初始化服务器地址                                                 *
-        //*openUid    用户OpenId                                                         *
         //*appUid    第三方应用APP_ID                                                    *
         //*appSecret  密钥                                                               *
         //*******************************************************************************
-        openSDk.init("http://127.0.0.1:8086","34342fsdfsdf","eyJhbGciOiJIUzI1NiJ9.eyJ0ZWxlZ3JhbUlkIjoiMzM0ODAyMDk2In0.aKDrqbmGmKVaADCC08M1NjiIw9lcSwPK40PBaEpKc-Q","6aae383b54f5d3503097991a60575bd7");
+        openSDk.init("http://127.0.0.1:8086","34342fsdfsdf","6aae383b54f5d3503097991a60575bd7");
 
         //******************************注释*********************************************
         //*获取用户登陆凭证                                                              *
@@ -49,7 +48,7 @@ public class OpenSdkDemo {
         //*accountUid   App账号ID                                                        *
         //*accountToken App账号当前Token                                                 *
         //*******************************************************************************
-        result = openSDk.queryCode(accountUid);
+        result = openSDk.queryCode(accountUid,accountToken);
         System.out.println("result:"+result);
         JSONObject jsonObject=JSONObject.parseObject(result);
         if("0".equals(jsonObject.get("code"))){
@@ -67,7 +66,7 @@ public class OpenSdkDemo {
         //*code      临时登录凭证                                                        *
         //*appSecret 密钥                                                                *
         //*******************************************************************************
-        result = openSDk.queryOpenid(code);
+        result = openSDk.queryOpenid("MZSZZfkQ9YctyOpB");
         System.out.println("result:"+result);
 
         //******************************注释*********************************************

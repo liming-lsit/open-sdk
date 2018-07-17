@@ -38,11 +38,11 @@ public class OpenSDk {
      * @param appSecret      SECRET
      */
     public void init(String serveraddress,String appUid,String appSecret) {
-        if (StringUtils.isEmpty(serveraddress)) {
+        if (isEmpty(serveraddress)) {
             LoggerUtil.error("初始化异常:serveraddress");
             throw new IllegalArgumentException("必选参数:serveraddress为空");
         }
-        if (StringUtils.isEmpty(appSecret)) {
+        if (isEmpty(appSecret)) {
             LoggerUtil.error("初始化异常:appSecret");
             throw new IllegalArgumentException("必选参数:appSecret 为空");
         }
@@ -170,39 +170,39 @@ public class OpenSDk {
     public boolean notifyValidate(String outTradeNo,String totalFee, String currency,String payAt,String result, String timestamp, String scode,String sign){
         LoggerUtil.info("[notifyValidate] outTradeNo:{"+outTradeNo+"},appUid:{"+APPUID+"},result{"+result+"},totalFee:{"+totalFee+"},payAt:{"+payAt+"},scode:{"+scode+"},sign:{"+sign+"}");
         boolean flag = true;
-        if(StringUtils.isEmpty(APPUID)) {
+        if(isEmpty(APPUID)) {
             LoggerUtil.error("必选参数:appUid 为空");
             throw new IllegalArgumentException("必选参数:appUid 为空");
         }
-        if(StringUtils.isEmpty(outTradeNo)) {
+        if(isEmpty(outTradeNo)) {
             LoggerUtil.error("必选参数:outTradeNo 为空");
             throw new IllegalArgumentException("必选参数:outTradeNo 为空");
         }
-        if(StringUtils.isEmpty(totalFee)) {
+        if(isEmpty(totalFee)) {
             LoggerUtil.error("必选参数:totalFee 为空");
             throw new IllegalArgumentException("必选参数:totalFee 为空");
         }
-        if(StringUtils.isEmpty(currency)) {
+        if(isEmpty(currency)) {
             LoggerUtil.error("必选参数:currency 为空");
             throw new IllegalArgumentException("必选参数:currency 为空");
         }
-        if(StringUtils.isEmpty(payAt)) {
+        if(isEmpty(payAt)) {
             LoggerUtil.error("必选参数:payAt 为空");
             throw new IllegalArgumentException("必选参数:payAt 为空");
         }
-        if(StringUtils.isEmpty(result)) {
+        if(isEmpty(result)) {
             LoggerUtil.error("必选参数:result 为空");
             throw new IllegalArgumentException("必选参数:result 为空");
         }
-        if(StringUtils.isEmpty(timestamp)) {
+        if(isEmpty(timestamp)) {
             LoggerUtil.error("必选参数:timestamp 为空");
             throw new IllegalArgumentException("必选参数:timestamp 为空");
         }
-        if(StringUtils.isEmpty(scode)) {
+        if(isEmpty(scode)) {
             LoggerUtil.error("必选参数:scode 为空");
             throw new IllegalArgumentException("必选参数:scode 为空");
         }
-        if(StringUtils.isEmpty(sign)) {
+        if(isEmpty(sign)) {
             LoggerUtil.error("必选参数:sign 为空");
             throw new IllegalArgumentException("必选参数:sign 为空");
         }
@@ -271,5 +271,9 @@ public class OpenSDk {
     private void setHttpHeader(AbstractHttpMessage httpMessage) {
         httpMessage.setHeader("Accept", "application/json");
         httpMessage.setHeader("Content-Type", "application/json;charset=utf-8");
+    }
+
+    private boolean isEmpty(String str) {
+        return (("".equals(str)) || (str == null));
     }
 }

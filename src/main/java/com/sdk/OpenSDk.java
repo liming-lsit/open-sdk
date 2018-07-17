@@ -6,7 +6,6 @@ import com.sdk.utils.HttpClient;
 import com.sdk.utils.LoggerUtil;
 import com.sdk.utils.SignUtil;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -51,28 +50,7 @@ public class OpenSDk {
         APPSECRET = appSecret;
     }
 
-  /*  *//**
-     * 获取用户登陆凭证
-     * @param accountUid   App账号ID
-     * @return
-     *//*
-    public String queryCode(String accountUid,String accountToken){
-        LoggerUtil.info("[queryCode] accountUid:{"+accountUid+"},appUid:{"+APPUID+"},accountToken:{"+accountToken+"}");
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("appUid", APPUID);
-        params.put("accountUid", accountUid);
-        params.put("accountToken", accountToken);
-        String ret = "";
-        String jsonParam= JSONObject.toJSONString(params);
-        try{
-            ret = HttpClient.postDataJson(SERVER_ADDRESS+QueryCode,jsonParam);
-        }catch (Exception e) {
-            e.printStackTrace();
-            LoggerUtil.error(e.getMessage());
-            return getMyError("101111", "请求异常");
-        }
-        return ret;
-    }*/
+
 
     /**
      * 获取用户信息接口
@@ -105,7 +83,7 @@ public class OpenSDk {
         long timeStamp = System.currentTimeMillis();
         params.put("appUid", APPUID);
         params.put("code", code);
-        params.put("timeStamp", String.valueOf(timeStamp));
+        params.put("timestamp", String.valueOf(timeStamp));
         params.put("nonceStr", nonceStr);
         String computed_sign =  SignUtil.getSign(params,APPSECRET);
         params.put("appSecret", APPSECRET);
@@ -132,7 +110,7 @@ public class OpenSDk {
         params.put("openUid", openUid);
         params.put("outTradeNo", orderSn);
         long timeStamp = System.currentTimeMillis();
-        params.put("timeStamp", String.valueOf(timeStamp));
+        params.put("timestamp", String.valueOf(timeStamp));
         String nonceStr = RandomStringUtils.randomAlphanumeric(8);
         params.put("totalFee", totalFee);
         params.put("currency", currency);
@@ -263,7 +241,7 @@ public class OpenSDk {
         map.put("payAt",payAt);
         map.put("result",result);
         map.put("scode",scode);
-        map.put("timeStamp",timestamp);
+        map.put("timestamp",timestamp);
         String computedSign =  SignUtil.getSign(map,appSecret);
         return sign.equals(computedSign);
     }

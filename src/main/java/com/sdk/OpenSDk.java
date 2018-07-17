@@ -51,11 +51,11 @@ public class OpenSDk {
         APPSECRET = appSecret;
     }
 
-    /**
+  /*  *//**
      * 获取用户登陆凭证
      * @param accountUid   App账号ID
      * @return
-     */
+     *//*
     public String queryCode(String accountUid,String accountToken){
         LoggerUtil.info("[queryCode] accountUid:{"+accountUid+"},appUid:{"+APPUID+"},accountToken:{"+accountToken+"}");
         Map<String, Object> params = new HashMap<String, Object>();
@@ -72,7 +72,7 @@ public class OpenSDk {
             return getMyError("101111", "请求异常");
         }
         return ret;
-    }
+    }*/
 
     /**
      * 获取用户信息接口
@@ -125,7 +125,7 @@ public class OpenSDk {
      */
     public String createOrder(String openUid,
                               String orderSn, String totalFee,String exchange,
-                              String body,String notifyUrl,String feeType){
+                              String body,String notifyUrl,String currency){
         LoggerUtil.info("[createOrder] openUid:{"+openUid+"},appUid:{"+APPUID+"},orderSn{"+orderSn+"},totalFee:{"+totalFee+"},exchange:{"+exchange+"},body:{"+body+"},notifyUrl:{"+notifyUrl+"}");
         Map<String, String> params = new HashMap<String, String>();
         params.put("appUid", APPUID);
@@ -135,7 +135,7 @@ public class OpenSDk {
         params.put("timeStamp", String.valueOf(timeStamp));
         String nonceStr = RandomStringUtils.randomAlphanumeric(8);
         params.put("totalFee", totalFee);
-        params.put("feeType", feeType);
+        params.put("currency", currency);
         params.put("exchange", exchange);
         params.put("nonceStr", nonceStr);
         params.put("body", body);
@@ -159,7 +159,7 @@ public class OpenSDk {
      * 商户订单数据校验
      * @param outTradeNo  订单号
      * @param totalFee    价格
-     * @param feeType     币种
+     * @param currency     币种
      * @param payAt       支付时间
      * @param result
      * @param timestamp   时间戳
@@ -167,7 +167,7 @@ public class OpenSDk {
      * @param sign
      * @return
      */
-    public boolean notifyValidate(String outTradeNo,String totalFee, String feeType,String payAt,String result, String timestamp, String scode,String sign){
+    public boolean notifyValidate(String outTradeNo,String totalFee, String currency,String payAt,String result, String timestamp, String scode,String sign){
         LoggerUtil.info("[notifyValidate] outTradeNo:{"+outTradeNo+"},appUid:{"+APPUID+"},result{"+result+"},totalFee:{"+totalFee+"},payAt:{"+payAt+"},scode:{"+scode+"},sign:{"+sign+"}");
         boolean flag = true;
         if(StringUtils.isEmpty(APPUID)) {
@@ -182,9 +182,9 @@ public class OpenSDk {
             LoggerUtil.error("必选参数:totalFee 为空");
             throw new IllegalArgumentException("必选参数:totalFee 为空");
         }
-        if(StringUtils.isEmpty(feeType)) {
-            LoggerUtil.error("必选参数:feeType 为空");
-            throw new IllegalArgumentException("必选参数:feeType 为空");
+        if(StringUtils.isEmpty(currency)) {
+            LoggerUtil.error("必选参数:currency 为空");
+            throw new IllegalArgumentException("必选参数:currency 为空");
         }
         if(StringUtils.isEmpty(payAt)) {
             LoggerUtil.error("必选参数:payAt 为空");
@@ -207,7 +207,7 @@ public class OpenSDk {
             throw new IllegalArgumentException("必选参数:sign 为空");
         }
         if (!verifyNotify(APPUID, outTradeNo,result,
-                totalFee, feeType, payAt,
+                totalFee, currency, payAt,
                 timestamp, scode,
                 sign, APPSECRET)) {
             LoggerUtil.error("签名验证错误 ");
@@ -243,7 +243,7 @@ public class OpenSDk {
      * @param appUid
      * @param outTradeNo
      * @param totalFee
-     * @param feeType
+     * @param currency
      * @param payAt
      * @param timestamp
      * @param scode
@@ -252,14 +252,14 @@ public class OpenSDk {
      * @return
      */
     public Boolean verifyNotify(String appUid, String outTradeNo,String result,
-                                String totalFee, String feeType, String payAt,
+                                String totalFee, String currency, String payAt,
                                 String timestamp, String scode,
                                 String sign, String appSecret) {
         Map<String,String> map = new HashMap<String, String>();
         map.put("appUid",appUid);
         map.put("outTradeNo",outTradeNo);
         map.put("totalFee",totalFee);
-        map.put("feeType",feeType);
+        map.put("currency",currency);
         map.put("payAt",payAt);
         map.put("result",result);
         map.put("scode",scode);

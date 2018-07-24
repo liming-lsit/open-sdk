@@ -25,8 +25,10 @@ public class OpenSDk {
     private static final int Request_Post = 1;
     private static  String SERVER_ADDRESS;
     private static final String PayPrepay = "/payment/prepay";
-    private static final String QueryOpenid = "/appUsers/queryOpenId";
-    private static final String QueryCode = "/appUsers/queryCode";
+    private static final String QueryAccessToken= "/appUsers/access_token";
+    private static final String QueryCode = "/appUsers/code";
+    private static final String QueryUserInfo = "/appUsers/userInfo";
+    private static final String QueryAppToken = "/app/token";
     private static String APPUID;
     private static String APPSECRET;
 
@@ -53,17 +55,26 @@ public class OpenSDk {
 
 
     /**
-     * 获取用户信息接口
-     * @param code      临时登录凭证
+     * 获取用户信息
+     * @param accessToken
+     * @param openId
      * @return
      */
-    public String queryOpenid(String code){
-        LoggerUtil.info("[queryOpenid] code:{"+code+"},appUid:{"+APPUID+"}");
+    public String QueryUserInfo(String accessToken,String openId){
+        LoggerUtil.info("[QueryUserInfo] openId:{"+openId+"},accessToken:{"+accessToken+"}");
         String ret = "";
-        Map<String,String> params = queryParams(code);
+        if(isEmpty(openId)) {
+            LoggerUtil.error("必选参数:openId 为空");
+            throw new IllegalArgumentException("必选参数:openId 为空");
+        }
+        if(isEmpty(accessToken)) {
+            LoggerUtil.error("必选参数:accessToken 为空");
+            throw new IllegalArgumentException("必选参数:accessToken 为空");
+        }
+        Map<String,String> params = queryParams(accessToken,openId);
         String jsonParam= JSONObject.toJSONString(params);
         try{
-            ret = HttpClient.postDataJson(SERVER_ADDRESS+QueryOpenid,jsonParam);
+            ret = HttpClient.postDataJson(SERVER_ADDRESS+QueryUserInfo,jsonParam);
         }catch (Exception e) {
             e.printStackTrace();
             LoggerUtil.error(e.getMessage());
@@ -72,6 +83,59 @@ public class OpenSDk {
         return ret;
     }
 
+    /**
+     * QueryUserAccessToken
+     * @param code      临时登录凭证
+     * @return
+     */
+    public String QueryUserAccessToken(String code){
+        LoggerUtil.info("[QueryUserAccessToken] code:{"+code+"},appUid:{"+APPUID+"}");
+        String ret = "";
+        if(isEmpty(code)) {
+            LoggerUtil.error("必选参数:code 为空");
+            throw new IllegalArgumentException("必选参数:code 为空");
+        }
+        Map<String,String> params = queryParams(code);
+        String jsonParam= JSONObject.toJSONString(params);
+        try{
+            ret = HttpClient.postDataJson(SERVER_ADDRESS+QueryAccessToken,jsonParam);
+        }catch (Exception e) {
+            e.printStackTrace();
+            LoggerUtil.error(e.getMessage());
+            return getMyError("101111", "请求异常");
+        }
+        return ret;
+    }
+
+
+    /**
+     * 获取App Token
+     * @return
+     */
+    public String QueryAppAccessToken(){
+        LoggerUtil.info("[QueryAppAccessToken] code:{"+APPSECRET+"},appUid:{"+APPUID+"}");
+        String ret = "";
+        if(isEmpty(APPSECRET)) {
+            LoggerUtil.error("必选参数:APPSECRET 为空");
+            throw new IllegalArgumentException("必选参数:APPSECRET 为空");
+        }
+        if(isEmpty(APPUID)) {
+            LoggerUtil.error("必选参数:APPUID 为空");
+            throw new IllegalArgumentException("必选参数:APPUID 为空");
+        }
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("appUid", APPUID);
+        params.put("appSecret", APPSECRET);
+        String jsonParam= JSONObject.toJSONString(params);
+        try{
+            ret = HttpClient.postDataJson(SERVER_ADDRESS+QueryAppToken,jsonParam);
+        }catch (Exception e) {
+            e.printStackTrace();
+            LoggerUtil.error(e.getMessage());
+            return getMyError("101111", "请求异常");
+        }
+        return ret;
+    }
     /**
      * 拼接参数
      * @param code
@@ -91,6 +155,22 @@ public class OpenSDk {
         return params;
     }
 
+    /**
+     * 拼接参数
+     * @param openId
+     * @param accessToken
+     * @return
+     */
+    public Map<String,String> queryParams(String accessToken,String openId){
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("accessToken", accessToken);
+        params.put("openId", openId);
+        return params;
+    }
+
+
+
+
 
     /**
      * 创建订单
@@ -101,10 +181,10 @@ public class OpenSDk {
      * @param notifyUrl  推送回掉地址
      * @return
      */
-    public String createOrder(String openUid,
+    public String createOrder(String openUid,String accessToken,
                               String orderSn, String totalFee,String exchange,
                               String body,String notifyUrl,String currency){
-        LoggerUtil.info("[createOrder] openUid:{"+openUid+"},appUid:{"+APPUID+"},orderSn{"+orderSn+"},totalFee:{"+totalFee+"},exchange:{"+exchange+"},body:{"+body+"},notifyUrl:{"+notifyUrl+"}");
+        LoggerUtil.info("[createOrder] accessToken:{"+accessToken+"} openUid:{"+openUid+"},appUid:{"+APPUID+"},orderSn{"+orderSn+"},totalFee:{"+totalFee+"},exchange:{"+exchange+"},body:{"+body+"},notifyUrl:{"+notifyUrl+"}");
         Map<String, String> params = new HashMap<String, String>();
         params.put("appUid", APPUID);
         params.put("openUid", openUid);
@@ -116,6 +196,7 @@ public class OpenSDk {
         params.put("currency", currency);
         params.put("exchange", exchange);
         params.put("nonceStr", nonceStr);
+        params.put("accessToken", accessToken);
         params.put("body", body);
         params.put("notifyUrl", notifyUrl);
         String sign = SignUtil.getSign(params,APPSECRET);

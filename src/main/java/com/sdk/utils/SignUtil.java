@@ -37,12 +37,12 @@ public class SignUtil {
                     String key = item.getKey();
                     String val = item.getValue();
                     if (!(val == "" || val == null)) {
-                        sb.append(key + ":" + val + ":");
+                        sb.append(key + "=" + val + "&");
                     }
                 }
 
             }
-			sb.append("&key="+appSecret);
+			sb.append("key="+appSecret);
             result = sb.toString();
 
             //进行MD5加密

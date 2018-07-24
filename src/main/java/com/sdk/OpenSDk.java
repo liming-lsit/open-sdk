@@ -27,7 +27,7 @@ public class OpenSDk {
     private static final String PayPrepay = "/payment/prepay";
     private static final String QueryAccessToken= "/appUsers/access_token";
     private static final String QueryCode = "/appUsers/code";
-    private static final String QueryUserInfo = "/appUsers/userInfo";
+    private static final String QueryUserInfo = "/appUsers/user_info";
     private static final String QueryAppToken = "/app/token";
     private static String APPUID;
     private static String APPSECRET;

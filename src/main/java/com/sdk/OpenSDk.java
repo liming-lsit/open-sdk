@@ -150,7 +150,6 @@ public class OpenSDk {
         params.put("timestamp", String.valueOf(timeStamp));
         params.put("nonceStr", nonceStr);
         String computed_sign =  SignUtil.getSign(params,APPSECRET);
-        params.put("appSecret", APPSECRET);
         params.put("sign", computed_sign);
         return params;
     }

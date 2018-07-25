@@ -56,9 +56,9 @@ public class OpenSDk {
 
     /**
      * 获取用户信息
-     * @param accessToken
-     * @param openId
-     * @return
+     * @param accessToken accessToken
+     * @param openId openId
+     * @return String
      */
     public String QueryUserInfo(String accessToken,String openId){
         LoggerUtil.info("[QueryUserInfo] openId:{"+openId+"},accessToken:{"+accessToken+"}");
@@ -86,7 +86,7 @@ public class OpenSDk {
     /**
      * QueryUserAccessToken
      * @param code      临时登录凭证
-     * @return
+     * @return String
      */
     public String QueryUserAccessToken(String code){
         LoggerUtil.info("[QueryUserAccessToken] code:{"+code+"},appUid:{"+APPUID+"}");
@@ -110,7 +110,7 @@ public class OpenSDk {
 
     /**
      * 获取App Token
-     * @return
+     * @return String
      */
     public String QueryAppAccessToken(){
         LoggerUtil.info("[QueryAppAccessToken] code:{"+APPSECRET+"},appUid:{"+APPUID+"}");
@@ -138,8 +138,8 @@ public class OpenSDk {
     }
     /**
      * 拼接参数
-     * @param code
-     * @return
+     * @param code code
+     * @return Map
      */
     public Map<String,String> queryParams(String code){
         Map<String, String> params = new HashMap<String, String>();
@@ -156,9 +156,9 @@ public class OpenSDk {
 
     /**
      * 拼接参数
-     * @param openId
-     * @param accessToken
-     * @return
+     * @param openId 用户OpenId
+     * @param accessToken accessToken
+     * @return Map
      */
     public Map<String,String> queryParams(String accessToken,String openId){
         Map<String, String> params = new HashMap<String, String>();
@@ -174,11 +174,14 @@ public class OpenSDk {
     /**
      * 创建订单
      * @param openUid    用户OpenId
+     * @param accessToken accessToken
      * @param orderSn    订单号
      * @param totalFee   价格
      * @param body       描述
+     * @param exchange   是否支持兑换
      * @param notifyUrl  推送回掉地址
-     * @return
+     * @param currency   币种
+     * @return String
      */
     public String createOrder(String openUid,String accessToken,
                               String orderSn, String totalFee,String exchange,
@@ -219,11 +222,11 @@ public class OpenSDk {
      * @param totalFee    价格
      * @param currency     币种
      * @param payAt       支付时间
-     * @param result
+     * @param result       result
      * @param timestamp   时间戳
-     * @param scode
-     * @param sign
-     * @return
+     * @param scode       支付订单号
+     * @param sign        签名
+     * @return boolean
      */
     public boolean notifyValidate(String outTradeNo,String totalFee, String currency,String payAt,String result, String timestamp, String scode,String sign){
         LoggerUtil.info("[notifyValidate] outTradeNo:{"+outTradeNo+"},appUid:{"+APPUID+"},result{"+result+"},totalFee:{"+totalFee+"},payAt:{"+payAt+"},scode:{"+scode+"},sign:{"+sign+"}");
@@ -298,16 +301,17 @@ public class OpenSDk {
 
     /**
      * 订单签名
-     * @param appUid
-     * @param outTradeNo
-     * @param totalFee
-     * @param currency
-     * @param payAt
-     * @param timestamp
-     * @param scode
-     * @param sign
-     * @param appSecret
-     * @return
+     * @param appUid      AppId
+     * @param outTradeNo  订单号
+     * @param result      result
+     * @param totalFee    价格
+     * @param currency    币种
+     * @param payAt       支付时间
+     * @param timestamp   时间戳
+     * @param scode       支付订单号
+     * @param sign        签名
+     * @param appSecret   密钥
+     * @return Boolean
      */
     public Boolean verifyNotify(String appUid, String outTradeNo,String result,
                                 String totalFee, String currency, String payAt,

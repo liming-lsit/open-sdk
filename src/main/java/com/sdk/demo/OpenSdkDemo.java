@@ -7,8 +7,7 @@ import com.sdk.OpenSDk;
 /**
  * describe:
  *
- * @author xxx
- * @date 2018/7/11
+ * @author LM
  */
 public class OpenSdkDemo {
 

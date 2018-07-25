@@ -4,18 +4,14 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.*;
 
-/**
- * describe:
- *
- * @author lm
- * @date 2018/7/14
- */
+
 public class SignUtil {
 
     /**
      * 生成签名
-     * @param map
-     * @return
+     * @param map 签名串
+     * @param appSecret 密钥
+     * @return String
      */
     public static String getSign(Map<String, String> map,String appSecret) {
 

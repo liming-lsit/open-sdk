@@ -34,13 +34,7 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 
 
-/**
- * 流量网关_v2.0
- * @ClassName: HttpClient
- * @author wanglz
- * @date 2015-7-17
- *
- */
+
 public class HttpClient {
 
 	
@@ -103,13 +97,7 @@ public class HttpClient {
 	synchronized public static HttpClient getInstance(){
 		return _instance;
 	}
-	/**
-	 * 调用rest请求
-	 * @param url
-	 * @param xmlData
-	 * @param curDate
-	 * @return
-	 */
+
 	 public static String postRestData(String url, String xmlData,Date curDate)  {
 			LoggerUtil.info("请求rest地址:"+url);
 			LoggerUtil.info("请求rest内容:"+xmlData);
@@ -164,14 +152,7 @@ public class HttpClient {
 			}
 			return result;
 		}
-	/**
-	 * 调用rest请求
-	 * @param url
-	 * @param xmlData
-	 * @param accountId
-	 * @param curDate
-	 * @return
-	 */
+
 	public static String postRestData(String url, String xmlData,String accountId,Date curDate)  {
 //		LoggerUtil.info("请求rest地址:"+url);
 //		LoggerUtil.info("请求rest内容:"+xmlData);
@@ -663,15 +644,7 @@ public class HttpClient {
 	        System.out.println("info:"+url+" download success");
 
 	    }
-	  
-	  
-	  
-	    /** 
-	     * 从输入流中获取字节数组 
-	     * @param inputStream 
-	     * @return 
-	     * @throws IOException 
-	     */  
+
 	    public static  byte[] readInputStream(InputStream inputStream) throws IOException {    
 	        byte[] buffer = new byte[1024];    
 	        int len = 0;    

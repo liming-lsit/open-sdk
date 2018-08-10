@@ -26,6 +26,7 @@ public class OpenSDk {
     private static  String SERVER_ADDRESS;
     private static final String PayPrepay = "/payment/prepay";
     private static final String QueryAccessToken= "/appUsers/access_token";
+    private static final String RefreshAccessToken= "/appUsers/refresh_token";
     private static final String QueryCode = "/appUsers/code";
     private static final String QueryUserInfo = "/appUsers/user_info";
     private static final String QueryAppToken = "/app/token";
@@ -113,19 +114,20 @@ public class OpenSDk {
      * @return String
      */
     public String QueryAppAccessToken(){
-        LoggerUtil.info("[QueryAppAccessToken] code:{"+APPSECRET+"},appUid:{"+APPUID+"}");
+        LoggerUtil.info("[QueryAppAccessToken] appUid:{"+APPUID+"}");
         String ret = "";
-        if(isEmpty(APPSECRET)) {
-            LoggerUtil.error("必选参数:APPSECRET 为空");
-            throw new IllegalArgumentException("必选参数:APPSECRET 为空");
-        }
         if(isEmpty(APPUID)) {
             LoggerUtil.error("必选参数:APPUID 为空");
             throw new IllegalArgumentException("必选参数:APPUID 为空");
         }
         Map<String, String> params = new HashMap<String, String>();
+        String nonceStr = RandomStringUtils.randomAlphanumeric(8);
+        long timeStamp = System.currentTimeMillis();
         params.put("appUid", APPUID);
-        params.put("appSecret", APPSECRET);
+        params.put("timestamp", String.valueOf(timeStamp));
+        params.put("nonceStr", nonceStr);
+        String computed_sign =  SignUtil.getSign(params,APPSECRET);
+        params.put("sign", computed_sign);
         String jsonParam= JSONObject.toJSONString(params);
         try{
             ret = HttpClient.postDataJson(SERVER_ADDRESS+QueryAppToken,jsonParam);
@@ -136,6 +138,45 @@ public class OpenSDk {
         }
         return ret;
     }
+
+
+
+    /**
+     * 刷新token
+     * @param  refreshToken 刷新token
+     * @return String
+     */
+    public String RefreshAccessToken(String refreshToken){
+        LoggerUtil.info("[RefreshAccessToken] appUid:{"+APPUID+"},refreshToken:{"+refreshToken+"}");
+        String ret = "";
+        if(isEmpty(APPUID)) {
+            LoggerUtil.error("必选参数:APPUID 为空");
+            throw new IllegalArgumentException("必选参数:APPUID 为空");
+        }
+        if(isEmpty(refreshToken)) {
+            LoggerUtil.error("必选参数:refreshToken 为空");
+            throw new IllegalArgumentException("必选参数:refreshToken 为空");
+        }
+        Map<String, String> params = new HashMap<String, String>();
+        String nonceStr = RandomStringUtils.randomAlphanumeric(8);
+        long timeStamp = System.currentTimeMillis();
+        params.put("appId", APPUID);
+        params.put("refreshToken", refreshToken);
+        String jsonParam= JSONObject.toJSONString(params);
+        try{
+            ret = HttpClient.postDataJson(SERVER_ADDRESS+RefreshAccessToken,jsonParam);
+        }catch (Exception e) {
+            e.printStackTrace();
+            LoggerUtil.error(e.getMessage());
+            return getMyError("101111", "请求异常");
+        }
+        return ret;
+    }
+
+
+
+
+
     /**
      * 拼接参数
      * @param code code
